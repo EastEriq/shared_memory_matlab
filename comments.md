@@ -5,12 +5,14 @@
 - Requires that one copy of the data resides on a disk file. That solves the problem of an unique pointer
   to it visible by all instances, and perhaps some access mutexing, but demands i/o.
 
-Wrong use model for us. Our shared data is not the product we want to store permanently on file. our shared data is written once and read once only.
-Forget.
+Wrong use model for us. The data we want to share is not the product we want to store permanently on file.
+Our shared data is written once and read once only.
+
+Forget it.
 
 # [Xuebin Zhou, shared_matrix](https://github.com/qhgz2013/shared_matrix)
 
-- compiles easily
+- compiles easily (run `compile.m`)
 - creates an object `shared_matrix_host` for each individual shared variable, containing the pointer, which
   needs to be transmitted to all parties
 - the example given is for a `parfor` pool, which handles by itself the problem of sharing the object
@@ -47,3 +49,19 @@ a=accessor.get_data()
 ...
 accessor.detach
 ```
+
+## [Joshua Dillon's sharedmatrix](https://www.mathworks.com/matlabcentral/fileexchange/28572-sharedmatrix)
+
+- compiles easily running `sharedmatrix_install.m`
+- has a single calling function `sharedmatrix()` with different keys for different tasks
+- see `help sharedmatrix` for detailed info
+- the pointer required is a simple numeric key - can easily be transmitted via Messengers
+- can share cells and char arrays
+
+
+## [Gene Harvey's mathshare](https://github.com/gharveymn/matshare)
+
+
+[Also on matlabcentral](https://www.mathworks.com/matlabcentral/fileexchange/68161-matshare?s_tid=ta_fx_results)
+
+
