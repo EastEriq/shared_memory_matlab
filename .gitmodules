@@ -1,3 +1,6 @@
 [submodule "shared_matrix"]
 	path = shared_matrix
 	url = https://github.com/qhgz2013/shared_matrix.git
+[submodule "mathshare"]
+	path = matshare
+	url = https://github.com/EastEriq/matshare.git
