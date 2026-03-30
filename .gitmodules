@@ -3,4 +3,4 @@
 	url = https://github.com/qhgz2013/shared_matrix.git
 [submodule "matshare"]
 	path = matshare
-	url = https://github.com/gharveymn/matshare.git
+	url = https://github.com/EastEriq/matshare.git
