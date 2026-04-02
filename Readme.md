@@ -1,6 +1,6 @@
 # Considerations on options for sharing memory data among different matlab application instances
 
-Underlying concepts (?): System V shared memory operations, `man shm_overview`, `/dev/shm`, `man icps`.
+Underlying concepts (?): System V shared memory operations, `man shm_overview`, `/dev/shm`, `man ipcs`.
 
 ## [matlab's own `memmapfile`](https://www.mathworks.com/help/matlab/import_export/share-memory-between-applications.html)
 
