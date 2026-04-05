@@ -92,6 +92,27 @@ sharedmatrix('detach',111111,c)
 sharedmatrix('free',111111)
 ```
 
+### application notes
+
+- Fixed numeric keys are likely the only way to enforce roles (e.g. 10001..10100 for first camera buffer, 20001..20100 for second,
+  30000 for \[lon, lat], etc.). These numbers correspond to what `ipcs` reports as 'key'; for other system processes they are
+  mostly `0x00000000`. Instead `shmid` is apparently assigned randomly by the system. However
+- there is no strict guarantee that a key is not already in use;
+- it is possible to copy data into shared memory with `sharedmatrix('clone')` only once. To write new data the key has
+  to be freed first, but free works only if the keyalready exists; thus the safe way is probably
+```
+try
+  sharedmatrix('free',key)
+catch
+end
+sharedmatrix('clone',key,expr)
+```
+- on the 'client' side, `sharedmatrix('detach',key,var)` fills _var_ with `[]` (or with a cell of the same size wit all
+  elements empty, if a cell), destroying its previous value. It
+  also seems that `var2=var; sharedmatrix('detach',key,var)` empties var2, as if var2 is a shallow copy until reassigned
+  to an epression (i.e `var2=var+0;`)
+- the key has to be detached from all clients before (not sure about this) it can be freed by the master.
+
 ## [Gene Harvey's matshare](https://github.com/gharveymn/matshare)
 
 [Also on matlabcentral](https://www.mathworks.com/matlabcentral/fileexchange/68161-matshare?s_tid=ta_fx_results)
@@ -102,7 +123,7 @@ sharedmatrix('free',111111)
   operations (including IIUC `.overwrite` subarrays of shared matrices, which might be a way for us
   to implement a circular image buffer)
 - can do structures
-- the `.data` field of a fetched `matshare` object is linked, i.e. all the objects in all sessions 
+- the `.data` field of a fetched `matshare` object is linked, i.e. all the objects in all sessions
   see the changing values
 - has the option of including own variable names to the share
 - but there seems to be only _one_ persistent share for all attached processes (hence no need to
@@ -117,7 +138,7 @@ Timing:
 ```
 >> tic;matshare.share(a),toc
 
-ans = 
+ans =
 
   matshare object storing 6000x9000 uint16:
     data: [6000×9000 uint16]
@@ -125,8 +146,38 @@ ans =
 Elapsed time is 0.100741 seconds.
 ```
 
+### application note
+
+Strictly named shared variables seems the way to go to avoid conflicts. Also `.detach`, `.clearshm` and `.mshreset` have to
+be completely avoided. This minimal call sequence is probably stable
+
+- in the data server
+```
+b1=matshare.share('-n','buffer1',zeros(9600,6400,10,'uint16'))
+a=uint16(rand(9600,6400)*65536);
+b1.data(:,:,4)=a;
+```
+-in the data client
+```
+b1=matshare.fetch('-n','buffer1');
+a=b1.buffer1.data(:,:,4);
+```
+but the matlab sessions still crash on exit.
+
+
 # first impression's conclusion
 
 I'd probably leverage on *matshare*, but there is much of its features to ponder carefully for a viable pipeline
 workers implementation. And if I can't get round the clearing bug, I'd go for *sharedmatrix* as a second choice,
 though it is much more basic.
+
+# second impression
+
+Both *sharedmatrix* and *matshare* are unstable. This is very likely due to the effort of fitting undocumented
+and version dependent matlab complex memory management functions to the `icp` shared memory system.
+Moreover, there is a definite penalty in cloning a a matlab variable to shared memory.
+
+If at all, the strategy will probably be to identify a minimal subset of calls stable enough to implement
+repeatably the functionality needed, rather than attempting to make the full functionality robust.
+
+So far I managed a minimal patch to *matshare* which improves slightly `.clearshm`, but we're not there yet.
