@@ -175,7 +175,7 @@ though it is much more basic.
 # second impression
 
 Both *sharedmatrix* and *matshare* are unstable. This is very likely due to the effort of fitting undocumented
-and version dependent matlab complex memory management functions to the `icp` shared memory system.
+and version dependent matlab complex memory management functions to the `ipc` shared memory system.
 Moreover, there is a definite penalty in cloning a a matlab variable to shared memory.
 
 If at all, the strategy will probably be to identify a minimal subset of calls stable enough to implement
