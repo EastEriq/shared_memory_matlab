@@ -94,12 +94,13 @@ sharedmatrix('free',111111)
 
 ### application notes
 
-- Fixed numeric keys are likely the only way to enforce roles (e.g. 10001..10100 for first camera buffer, 20001..20100 for second,
+- Fixed numeric keys are likely the only way to enforce roles (e.g. 10001..10100 for the first camera buffer,
+  20001..20100 for the second,
   30000 for \[lon, lat], etc.). These numbers correspond to what `ipcs` reports as 'key'; for other system processes they are
   mostly `0x00000000`. Instead `shmid` is apparently assigned randomly by the system. However
 - there is no strict guarantee that a key is not already in use;
 - it is possible to copy data into shared memory with `sharedmatrix('clone')` only once. To write new data the key has
-  to be freed first, but free works only if the keyalready exists; thus the safe way is probably
+  to be freed first, but free works only if the key already exists; thus the safe way is probably
 ```
 try
   sharedmatrix('free',key)
@@ -157,7 +158,7 @@ b1=matshare.share('-n','buffer1',zeros(9600,6400,10,'uint16'))
 a=uint16(rand(9600,6400)*65536);
 b1.data(:,:,4)=a;
 ```
--in the data client
+- in the data client
 ```
 b1=matshare.fetch('-n','buffer1');
 a=b1.buffer1.data(:,:,4);
