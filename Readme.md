@@ -150,7 +150,7 @@ Elapsed time is 0.100741 seconds.
 ### application note
 
 Strictly named shared variables seems the way to go to avoid conflicts. Also `.detach`, `.clearshm` and `.mshreset` have to
-be completely avoided. This minimal call sequence is probably stable
+be avoided. This minimal call sequence is probably stable
 
 - in the data server
 ```
@@ -163,8 +163,20 @@ b1.data(:,:,4)=a;
 b1=matshare.fetch('-n','buffer1');
 a=b1.buffer1.data(:,:,4);
 ```
-but the matlab sessions still crash on exit.
+Sometimes the matlab sessions still crash on exit, possibly depending on the history of the workspaces and the number of times the shares have been `.fetch()`ed. The logic behind it may be due to the history of `mexArray`s crosslinks 
+(see under "matlab's copy on write").
+My patch helped to some extent, but didn't completely solve it.
 
+The memory allocated to shared variables appears under `ls -sh /dev/shm` like
+
+```
+1.2G MSH_SEGMENT0
+4.0K MSH_SEGMENT1
+4.0K MSH_SEGMENT2
+4.0K MSH_SEGMENT3
+4.0K MSH_SHARED_INFO_SEGMENT
+```
+These virtual files are cleared upon successful matlab process exit.
 
 # first impression's conclusion
 
