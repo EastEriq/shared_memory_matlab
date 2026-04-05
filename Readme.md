@@ -12,6 +12,15 @@ Our shared data is written once and read once only.
 
 Forget it.
 
+# [matlab's native parpool("Threads")](https://www.mathworks.com/help/parallel-computing/choose-between-thread-based-and-process-based-environments.html)
+
+I have to evaluate it yet. See
+[this blog](https://blogs.mathworks.com/matlab/2025/03/27/parallel-computing-in-matlab-have-you-tried-threadpools-yet/).
+The option should exist since r2020 so it should be viable for us. It's obvious advantage would be that it
+wouldn't need memory sharing at all. However, I doubt how it can be used for realizing any design
+requiring MIMD concurrency. Another point to consider is that, as stated, the matlab operations supported by the
+'threads' modality are limited. Among them, async i/o is not available, [as authoritatively remarked](https://blogs.mathworks.com/matlab/?p=3323#reply_2619377).
+
 # [Xuebin Zhou, shared_matrix](https://github.com/qhgz2013/shared_matrix)
 
 - compiles easily (run `compile.m`)
@@ -70,6 +79,7 @@ Elapsed time is 0.102258 seconds.
   Even cells whose elements are cells themselves. Not structures or objects, but it's already something.
 - It is also easy to crash matlab (e.g. `double free or corruption (out)`) if sharedmatrix is not freed
   before being recloned, or detached after being read once with 'attach'.
+- a quirk, it cannot share scalars. The minimum is a 2 element vector.
 - timing for cloning a variable of the size of an image is non negligible. Timing for attaching is:
 
 ```
