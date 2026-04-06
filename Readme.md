@@ -21,7 +21,7 @@ wouldn't need memory sharing at all. However, I doubt how it can be used for rea
 requiring MIMD concurrency. Another point to consider is that, as stated, the matlab operations supported by the
 'threads' modality are limited. Among them, async i/o is not available, [as authoritatively remarked](https://blogs.mathworks.com/matlab/?p=3323#reply_2619377).
 
-## [Xuebin Zhou, shared_matrix](https://github.com/qhgz2013/shared_matrix)
+## [Xuebin Zhou, shared_matrix](https://github.com/qhgz2013/shared_matrix) (last update 10/6/2021, stated support R2018b)
 
 - compiles easily (run `compile.m`)
 - creates an object `shared_matrix_host` for each individual shared variable, containing the pointer, which
@@ -69,7 +69,7 @@ Timing:
 Elapsed time is 0.102258 seconds.
 ```
 
-## [Joshua Dillon's sharedmatrix](https://www.mathworks.com/matlabcentral/fileexchange/28572-sharedmatrix)
+## [Joshua Dillon's sharedmatrix](https://www.mathworks.com/matlabcentral/fileexchange/28572-sharedmatrix) (last version 1.17.0.0, 8/6/2011, reported to crash since R2015b)
 
 - compiles easily running `sharedmatrix_install.m`
 - has a single calling function `sharedmatrix()` with different keys for different tasks
@@ -114,7 +114,7 @@ sharedmatrix('clone',key,expr)
   to an epression (i.e `var2=var+0;`)
 - the key has to be detached from all clients before (not sure about this) it can be freed by the master.
 
-## [Gene Harvey's matshare](https://github.com/gharveymn/matshare)
+## [Gene Harvey's matshare](https://github.com/gharveymn/matshare) (last version 1.2.0, 18/9/2018, stated support R2017b)
 
 [Also on matlabcentral](https://www.mathworks.com/matlabcentral/fileexchange/68161-matshare?s_tid=ta_fx_results)
 
