@@ -164,7 +164,7 @@ b1=matshare.fetch('-n','buffer1');
 a=b1.buffer1.data(:,:,4);
 ```
 Sometimes the matlab sessions still crash on exit, possibly depending on the history of the workspaces and the number of times the shares have been `.fetch()`ed. The logic behind it may be due to the history of `mexArray`s crosslinks 
-(see under "matlab's copy on write").
+(see under "[matlab's copy on write](https://stackoverflow.com/questions/65690681/copy-on-write-and-varargin-in-matlab)").
 My patch helped to some extent, but didn't completely solve it.
 
 The memory allocated to shared variables appears under `ls -sh /dev/shm` like
