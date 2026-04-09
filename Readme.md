@@ -194,3 +194,40 @@ If at all, the strategy will probably be to identify a minimal subset of calls s
 repeatably the functionality needed, rather than attempting to make the full functionality robust.
 
 So far I managed a minimal patch to *matshare* which improves slightly `.clearshm`, but we're not there yet.
+
+# third impression
+
+Instead of trying hopelessy to straighten something which tries to share native matlab structures between
+matlab sessions via `mxArray`s, and interferes with matlab's memory management,
+I may be better off rolling my minimal interface to msh. The stated purpose would be only to copy to
+the shared memory segment the image buffer identified by the pointer `QHYccd.pImg`. That would be a single
+memcopy from process memory to shared, by the acquisition worker, and at least one memcopy from shared to
+process (including unpacking and recasting?).
+
+The target memory transfer bandwidth on a single LAST node, btw, would be at max 2x120MB/400ms = 600MB/s.
+That has to be multiplied by the number of memcopies totally required to achieve the task.
+
+I have a skeleton repo for it [here](https://github.com/EastEriq/matlab-shared-pointer).
+
+# exploring other IPC infrastructure
+
+## mqueue
+
+I have a working minimal interface between matlab and POSIX mqueue in
+[matlab-posix-mqueue](https://github.com/EastEriq/matlab-posix-mqueue).
+
+This would provide a nice truly queued messaging channel, but has a limitation for images: its message size
+is practically [capped to 16MB in linux](https://github.com/EastEriq/shared_memory_matlab/issues/5).
+
+## POSIX sockets
+
+With sockets queueing would elementary and just a consequence of serialized streaming. Anyway sockets are
+[even more limited in size](https://linuxvox.com/blog/what-s-the-practical-limit-on-the-size-of-single-packet-transmitted-over-domain-socket/):
+
+```
+$ cat /proc/sys/net/core/wmem_max
+212992
+```
+
+There is a [matlab file exchange contribution](https://www.mathworks.com/matlabcentral/fileexchange/62093-matlab-python-posix-socket) which in truth is a wrapper to a python implementation, I haven't tested its performance.
+It was originally considered for the aborted [LAST_API](https://github.com/blumzi/LAST_Api/tree/webapi_transition).
