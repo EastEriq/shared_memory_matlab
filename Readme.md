@@ -231,3 +231,13 @@ $ cat /proc/sys/net/core/wmem_max
 
 There is a [matlab file exchange contribution](https://www.mathworks.com/matlabcentral/fileexchange/62093-matlab-python-posix-socket) which in truth is a wrapper to a python implementation, I haven't tested its performance.
 It was originally considered for the aborted [LAST_API](https://github.com/blumzi/LAST_Api/tree/webapi_transition).
+
+## plain files on a ramdisk
+
+Perhaps a simpler solution, especially if the only target is to dump in individual files the byte stream
+of each image. Circular buffering can easily be achieved by rotating the file names, or deleting older ones.
+The only overhead would be that the ramdisk would have to be defined in `fstab` of each node, and un/mounted
+on demand (by root?); creating shm segments is easier.
+
+There are a lot of tutorials about ramdisks out there, e.g 
+[this](https://www.linuxbabe.com/command-line/create-ramdisk-linux).
