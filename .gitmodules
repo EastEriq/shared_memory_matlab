@@ -4,3 +4,9 @@
 [submodule "mathshare"]
 	path = matshare
 	url = https://github.com/EastEriq/matshare.git
+[submodule "matlab-posix-mqueue"]
+	path = matlab-posix-mqueue
+	url = https://github.com/EastEriq/matlab-posix-mqueue.git
+[submodule "matlab-shared-pointer"]
+	path = matlab-shared-pointer
+	url = https://github.com/EastEriq/matlab-shared-pointer.git
